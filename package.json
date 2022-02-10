@@ -1,0 +1,26 @@
+{
+  "name": "synapse-fetch-mw",
+  "version": "1.0.0",
+  "description": "Fetch middleware for Matrix Synapse refresh tokens",
+  "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/meet-kinksters/synapse-fetch-mw.git"
+  },
+  "keywords": [
+    "fetch",
+    "matrix",
+    "synapse"
+  ],
+  "author": "Brad Jones (https://github.com/bradjones1)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/meet-kinksters/synapse-fetch-mw/issues"
+  },
+  "homepage": "https://github.com/meet-kinksters/synapse-fetch-mw#readme",
+  "files": [
+    "src/",
+    "LICENSE",
+    "README.md"
+  ]
+}
