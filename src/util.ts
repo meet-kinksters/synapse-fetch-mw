@@ -9,12 +9,12 @@ import SynapseMwError from "./error";
  * This function either obtains a new access token, or refreshes an old
  * one.
  */
-export async function refreshToken(options: Options, token: Token | null): Promise<Token> {
+export async function refreshToken(options: Options, token: Token): Promise<Token> {
     // The request body for the refresh endpoint
     let body: RefreshTokenRequest;
 
     body = {
-        refresh_token: token.refreshToken
+        refresh_token: token.refreshToken,
     };
 
     const headers: {[s: string]: string} = {
@@ -30,7 +30,6 @@ export async function refreshToken(options: Options, token: Token | null): Promi
     const jsonResult = await authResult.json();
 
     if (!authResult.ok) {
-
         const httpError = authResult.status;
         let errorMessage;
 
@@ -51,7 +50,7 @@ export async function refreshToken(options: Options, token: Token | null): Promi
 
     const newToken: Token = {
         accessToken: jsonResult.access_token,
-        expiresAt: jsonResult.expires_in ? Date.now() + (jsonResult.expires_in * 1000) : null,
+        expiresAt: jsonResult.expires_in_ms ? Date.now() + (jsonResult.expires_in_ms * 1000) : null,
         refreshToken: jsonResult.refresh_token ? jsonResult.refresh_token : null,
     };
     if (options.onTokenUpdate) {

@@ -4,7 +4,7 @@ import {
 } from './types';
 import {refreshToken} from './util';
 
-export default class SynapseFetch {
+export default class SynapseRefresh {
 
     options: Options;
     token: Token | null;
@@ -17,8 +17,7 @@ export default class SynapseFetch {
      */
     private activeRefresh: Promise<Token> | null;
 
-    constructor(options: Options & Partial<Token>, token: Token | null = null) {
-
+    constructor(options: Options & Partial<Token>, token: Token) {
         if (!token) {
             throw new Error('An access token must be provided.');
         }
@@ -36,7 +35,6 @@ export default class SynapseFetch {
      * to refresh it.
      */
     async fetch(input: RequestInfo, init?: RequestInit): Promise<Response> {
-
         // input might be a string or a Request object, we want to make sure this
         // is always a fully-formed Request object.
         const request = new Request(input, init);
@@ -56,7 +54,6 @@ export default class SynapseFetch {
      * represents the next 'fetch' function in the chain.
      */
     async fetchMw(request: Request, next: (request: Request) => Promise<Response>): Promise<Response> {
-
         const accessToken = await this.getAccessToken();
 
         let authenticatedRequest = request.clone();
@@ -64,16 +61,13 @@ export default class SynapseFetch {
         let response = await next(authenticatedRequest);
 
         if (!response.ok && response.status === 401) {
-
             const newToken = await this.refreshToken();
 
             authenticatedRequest = request.clone();
             authenticatedRequest.headers.set('Authorization', 'Bearer ' + newToken.accessToken);
             response = await next(authenticatedRequest);
-
         }
         return response;
-
     }
 
     /**
@@ -85,14 +79,12 @@ export default class SynapseFetch {
      *   * refreshToken - may be null
      */
     async getToken(): Promise<Token> {
-
         if (this.token && (this.token.expiresAt === null || this.token.expiresAt > Date.now())) {
             // The current token is still valid
             return this.token;
         }
 
         return this.refreshToken();
-
     }
 
     /**
@@ -121,7 +113,6 @@ export default class SynapseFetch {
         try {
             const token = await this.activeRefresh;
             this.token = token;
-            this.scheduleRefresh();
             return token;
         } catch (err: any) {
             if (this.options.onAuthError) {
